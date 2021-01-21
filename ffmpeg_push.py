@@ -4,15 +4,18 @@ import time
 
 ##rtmpUrl = "rtmp://txy.live-send.acg.tv/live-txy/?streamname=live_68783796_70316579&key=3d5eea1bd6edfd59c16b9bb9416f9a62"
 # rtmpUrl = "rtmp://qn.live-send.acg.tv/live-qn/?streamname=live_68783796_70316579&key=3d5eea1bd6edfd59c16b9bb9416f9a62&schedule=rtmp"
-rtmpUrl = "rtmp://qn.live-send.acg.tv/live-qn/?streamname=live_68783796_70316579&key=3d5eea1bd6edfd59c16b9bb9416f9a62&schedule=rtmp"
+# rtmpUrl = "rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_68783796_70316579&key=3d5eea1bd6edfd59c16b9bb9416f9a62&schedule=rtmp"
 
 # rtmpUrl = "rtmp://127.0.0.1:1935/live"
 # rtmpUrl = "rtmp://202.115.17.6:8002/live/test3"
-# rtmpUrl = "rtmp://202.115.17.6:8002/live/test2"
-# rtmpUrl = "rtmp://192.168.2.86:8001/live/test2"
-
-# rtmpUrl = "rtmp://192.168.2.104:1935/live/home"
-
+# rtmpUrl = "rtmp://202.115.17.6:50010/live/test2"
+rtmpUrl = "rtmp://192.168.2.86:50010/live/test2"
+rtmpUrl = "rtmp://202.115.17.6:50010/sign/test2"
+rtmpUrl = "rtmp://202.115.17.6:50010/hls/test2"
+rtmpUrl = "rtmp://202.115.17.6:40000/http_flv/test"
+# rtmpUrl = "rtmp://127.0.0.1/demo/stream-1" # http://localhost/live?app=demo&stream=stream-1
+# rtmpUrl = "rtmp://127.0.0.1:1935/demo/stream-1" # http://localhost/live?app=demo&stream=stream-1
+# rtmpUrl = "rtmp://202.115.17.6:1935/demo/stream-1" # http://202.115.17.6:61935/live?app=demo&stream=stream-1
 # cap_path = 0
 cap_path = r"rtmp://58.200.131.2:1935/livetv/hunantv"
 # cap_path = "http://112.50.243.8/PLTV/88888888/224/3221225900/1.m3u8"

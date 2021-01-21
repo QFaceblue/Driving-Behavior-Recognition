@@ -174,6 +174,42 @@ def createByLabel():
 # c8: hair and makeup
 # c9: talking to passenger
 
+# old labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "整理仪容", "接电话"]
+# new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话"]
+# 转换标签
+def convert_Label():
+
+    # source_txt = r"data/txt/12_23_12_addpre_train224.txt"
+    # dest_txt = r"data/txt6/12_23_12_addpre_train224_6.txt"
+    source_txt = r"data/txt/12_23_12_addpre_test224.txt"
+    dest_txt = r"data/txt6/12_23_12_addpre_test224_6.txt"
+    source_txt = r"data/txt/12_23_12_addpre_train224_addcrop.txt"
+    dest_txt = r"data/txt6/12_23_12_addpre_train224_addcrop_6.txt"
+    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt"
+    dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_6.txt"
+    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt"
+    dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_6.txt"
+    convert_index = [0, -1, 1, 2, 3, 4, -1, -1, 5]
+
+    with open(source_txt, encoding='utf-8') as f:
+        lines = f.readlines()
+    new_lines = []
+    for line in lines:
+        old_index = int(line.split()[1])
+        img_path = line.split()[0]
+        new_index = convert_index[old_index]
+        if new_index == -1:
+            continue
+        else:
+            # 需要转义\n
+            new_lines.append("{} {}\n".format(img_path, new_index))
+
+    print("old num:{}; new num:{}".format(len(lines),len(new_lines)))
+
+    with open(dest_txt, "w", encoding="utf-8") as f:
+        for i in range(len(new_lines)):
+            f.write(new_lines[i])
+
 def concatTxt():
 
     # source1 = r'./data/drive224.txt'
@@ -240,8 +276,8 @@ if __name__ == '__main__':
     # create_imagenet_val()
     # data_path = r"D:\drivedata\test_crop224"
     # createTxt(data_path, "./data/txt/119_testcrop224.txt")
-    data_path = r"D:\datasets\12_23_1\dataset\train224"
-    createTxt2(data_path, "data/txt/12_23_1_train224.txt")
+    # data_path = r"D:\datasets\12_23_1\dataset\test_crop224"
+    # createTxt2(data_path, "data/txt/12_23_1_test_crop224.txt")
     # data_path = r"D:\datasets\12_23_2\dataset\train224"
     # createTxt2(data_path, "data/txt/12_23_2_train224.txt")
     # data_path = r"D:\dataset\VLR-40\train"
@@ -254,3 +290,4 @@ if __name__ == '__main__':
     # concatTxt()
     # countTxt()
     # addClass()
+    convert_Label()

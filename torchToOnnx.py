@@ -143,8 +143,8 @@ def convert_mobilenetv2():
 
     model = models.mobilenet_v2(pretrained=False, num_classes=9)
     # 加载模型参数
-    path = r"checkpoint/data_12_23/mobilenetv2/888/mobilenetv2_1_12_23_acc=91.6275.pth"
-    to_path = r"checkpoint/data_12_23/mobilenetv2/888/mobilenetv2_1_12_23_acc=91.6275.onnx"
+    path = r"checkpoint/data_12_23/mobilenetv2/crop/444/mobilenetv2_1_crop_acc=90.9233.pth"
+    to_path = r"checkpoint/data_12_23/mobilenetv2/crop/444/mobilenetv2_1_crop_acc=90.9233.onnx"
     # to_path = r"checkpoint/data_11_16/mobilenetv2/pre/777/mobilenetv2_1_my_224c.onnx"
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint["net"])
@@ -503,8 +503,8 @@ if __name__ == '__main__':
     # convert_ghostnet_1_my()
     # convert_ghostnet_0_5_kg()
     # convert_ghostnet_0_3_kg()
-    # convert_mobilenetv2()
-    convert_mnext()
+    convert_mobilenetv2()
+    # convert_mnext()
     # convert_shufflenetv2()
     # convert_mobilenetv2_kaggle()
     # convert_mobilenetv2_05_kaggle()

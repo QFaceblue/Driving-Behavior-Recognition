@@ -185,7 +185,7 @@ train_transform = transforms.Compose([
     # transforms.RandomRotation(20, resample=False, expand=False, center=None),
     # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
     transforms.RandomRotation(10, resample=False, expand=False, center=None),
-    transforms.RandomHorizontalFlip(p=0.5),
+    # transforms.RandomHorizontalFlip(p=0.5),
     # # transforms.RandomVerticalFlip(p=0.5),
     # # ToTensor()能够把灰度范围从0-255变换到0-1之间，
     # # transform.Normalize()则把0-1变换到(-1,1).具体地说，对每个通道而言，Normalize执行以下操作：
@@ -267,6 +267,7 @@ start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 # num_classes = 100
 # num_classes = 10
 num_classes = 9
+num_classes = 6
 # net = EfficientNet.from_pretrained('efficientnet-b0',num_classes=num_classes)
 
 # net = models.resnet18(pretrained=True)
@@ -752,8 +753,26 @@ net.to(device)
 # val_dataset = MyDataset("data/txt/12_23_12_addpre_test224.txt", val_transform)
 # train_dataset = MyDataset("data/txt/12_23_12_addpre_train224_kg2my.txt", train_transform)
 # val_dataset = MyDataset("data/txt/12_23_12_addpre_test224.txt", val_transform)
-train_dataset = MyDataset("data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt", train_transform)
-val_dataset = MyDataset("data/txt/12_23_12_addpre_test224.txt", val_transform)
+# train_dataset = MyDataset("data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt", train_transform)
+# val_dataset = MyDataset("data/txt/12_23_12_addpre_test224.txt", val_transform)
+
+# crop 12_23
+# train_dataset = MyDataset("data/txt/12_23_12_addpre_train_crop224.txt", train_transform)
+# train_dataset = MyDataset("data/txt/12_23_12_addpre_train_crop224_kg2my.txt", train_transform)
+# train_dataset = MyDataset("data/txt/12_23_12_addpre_train_crop224_kg2my_aucv2_my.txt", train_transform)
+# val_dataset = MyDataset("data/txt/12_23_12_addpre_test_crop224.txt", val_transform)
+# train_dataset = MyDataset("data/txt/12_23_12_addpre_train224_addcrop.txt", train_transform)
+# train_dataset = MyDataset("data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt", train_transform)
+# val_dataset = MyDataset("data/txt/12_23_12_addpre_test224_addcrop.txt", val_transform)
+
+
+# class6
+train_dataset = MyDataset("data/txt6/12_23_12_addpre_train224_6.txt", train_transform)
+val_dataset = MyDataset("data/txt6/12_23_12_addpre_test224_6.txt", val_transform)
+train_dataset = MyDataset("data/txt6/12_23_12_addpre_train224_addcrop_6.txt", train_transform)
+val_dataset = MyDataset("data/txt6/12_23_12_addpre_test224_addcrop_6.txt", val_transform)
+train_dataset = MyDataset("data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_6.txt", train_transform)
+val_dataset = MyDataset("data/txt6/12_23_12_addpre_test224_addcrop_6.txt", val_transform)
 train_dataloader = DataLoader(dataset=train_dataset,
                               batch_size=64,
                               shuffle=True,
@@ -926,7 +945,7 @@ def train(epoch):
 # savepath = 'checkpoint/data_12_23/mobilenetv2/0/000/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre kg2my aucv2 change_lr9 sgd 1e-1
 # savepath = 'checkpoint/data_12_23/mobilenetv2/0/111/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre kg2my aucv2 change_lr9
 # savepath = 'checkpoint/data_12_23/mobilenetv2/0/222/' #  flip randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre change_lr9
-savepath = 'checkpoint/data_12_23/mobilenetv2/0/333/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre kg2my aucv2 change_lr9
+# savepath = 'checkpoint/data_12_23/mobilenetv2/0/333/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre kg2my aucv2 change_lr9
 
 # savepath = 'checkpoint/data_12_23/mobilenetv2/nopre/000/' #  nopre randcrop 16 rotation 10 colorjit 0.5 12_23_12_change_lr9 1e-3
 # savepath = 'checkpoint/data_12_23/mobilenetv2/nopre/111/' #  pre randcrop 16 rotation 10 colorjit 0.5 12_23_12_change_lr9 1e-3
@@ -941,6 +960,21 @@ savepath = 'checkpoint/data_12_23/mobilenetv2/0/333/' #  randcrop 16 rotation 10
 
 # savepath = 'checkpoint/data_12_23/mnext/000/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre kg2my aucv2 change_lr9
 # savepath = 'checkpoint/data_12_23/mnext/111/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre change_lr9
+
+
+# dataset 12_23
+# savepath = 'checkpoint/data_12_23/mobilenetv2/crop/000/' #  crop randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3
+# savepath = 'checkpoint/data_12_23/mobilenetv2/crop/111/' #  crop randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3 addpre kg2my
+# savepath = 'checkpoint/data_12_23/mobilenetv2/crop/222/' #  crop randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3 addpre kg2my aucv2
+# savepath = 'checkpoint/data_12_23/mobilenetv2/crop/333/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3 addpre addcrop
+# savepath = 'checkpoint/data_12_23/mobilenetv2/crop/444/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3 addpre kg2my aucv2 addcrop
+
+
+
+# dataset class6
+# savepath = 'checkpoint/data_12_23/class6/mobilenetv2/000/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3
+savepath = 'checkpoint/data_12_23/class6/mobilenetv2/111/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3
+savepath = 'checkpoint/data_12_23/class6/mobilenetv2/222/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_2 change_lr6 1e-3
 
 def val(epoch):
     global best_val_acc
@@ -1004,9 +1038,13 @@ def val(epoch):
         # torch.save(state, savepath + 'resnet50_1_aucv1_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'ghostnet_1_aucv1_acc={:.4f}.pth'.format(acc))
 
-        torch.save(state, savepath + 'mobilenetv2_1_12_23_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_1_12_23_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mobilenetv2_cbam_1_12_23_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mnext_1_12_23_acc={:.4f}.pth'.format(acc))
+
+        # torch.save(state, savepath + 'mobilenetv2_1_crop_acc={:.4f}.pth'.format(acc))
+
+        torch.save(state, savepath + 'mobilenetv2_1_c6_acc={:.4f}.pth'.format(acc))
 
         best_val_acc = acc
     return average_loss, test_acc
@@ -1094,7 +1132,7 @@ def main(epoches=epoches):
 
 
 def net_test():
-    # net = models.mobilenet_v2(pretrained=False, num_classes=num_classes, width_mult=1.0)
+    net = models.mobilenet_v2(pretrained=False, num_classes=num_classes, width_mult=1.0)
     # # model_path = r"checkpoint/data_11_16/mobilenetv2/pre/555/mobilenetv2_1_my_acc=96.1749.pth" # crop 160=0.7486338797814208
     # # model_path = r"checkpoint/data_11_16/mobilenetv2/pre/222/mobilenetv2_1_my_acc=92.3497.pth"  # 160=0.5846994535519126
     # # model_path = r"checkpoint/data_11_16/mobilenetv2/pre/666/mobilenetv2_1_my_acc=95.6284.pth"  # 160=0.9562841530054644 224=0.7486338797814208
@@ -1104,9 +1142,12 @@ def net_test():
     # # model_path = r"checkpoint/data_12_23/mobilenetv2/222/mobilenetv2_1_12_23_acc=93.6898.pth"
     # # model_path = r"checkpoint/data_12_23/mobilenetv2/333/mobilenetv2_1_12_23_acc=89.9061.pth"
     # model_path = r"checkpoint/data_12_23/mobilenetv2/888/mobilenetv2_1_12_23_acc=91.6275.pth"
-
-    net = mnext(num_classes=num_classes, width_mult=1.)
-    model_path = r"checkpoint/data_12_23/mnext/000/mnext_1_12_23_acc=92.1753.pth"
+    # model_path = r"checkpoint/data_12_23/mobilenetv2/0/222/mnext_1_12_23_acc=88.2629.pth" # mobilenetv2
+    # model_path = r"checkpoint/data_12_23/mobilenetv2/0/333/mobilenetv2_1_12_23_acc=84.8983.pth"
+    model_path = r"checkpoint/data_12_23/mobilenetv2/crop/333/mobilenetv2_1_crop_acc=90.8059.pth"
+    model_path = r"checkpoint/data_12_23/mobilenetv2/crop/444/mobilenetv2_1_crop_acc=90.9233.pth"
+    # net = mnext(num_classes=num_classes, width_mult=1.)
+    # model_path = r"checkpoint/data_12_23/mnext/000/mnext_1_12_23_acc=92.1753.pth"
     # 加载模型权重，忽略不同
     model_dict = net.state_dict()
     checkpoint = torch.load(model_path, map_location=device)
@@ -1135,6 +1176,7 @@ def net_test():
     # test_dataset = MyDataset("data/txt/12_23_1_test224.txt", test_transform)
     # test_dataset = MyDataset("data/txt/12_23_2_test224.txt", test_transform)
     test_dataset = MyDataset("data/txt/12_23_12_test224.txt", test_transform)
+    # test_dataset = MyDataset("data/txt/12_23_12_addpre_test_crop224.txt", test_transform)
     test_dataloader = DataLoader(dataset=test_dataset,
                                  batch_size=64,
                                  shuffle=True,
@@ -1163,6 +1205,9 @@ def net_test():
                          % (average_loss, 100. * test_acc, correct, total))
     # print(average_loss, test_acc)
     print("test_acc: ", test_acc)
+    labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "整理仪容", "接电话"]
+    print(labels)
+    print("row:target   col:predict")
     print(cm)
 
 # 配置环境变量

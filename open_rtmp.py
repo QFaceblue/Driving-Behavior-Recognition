@@ -70,7 +70,13 @@ if __name__ == '__main__':
     # cap_path = "http://112.50.243.8/PLTV/88888888/224/3221225900/1.m3u8"
     # cap_path = r"rtmp://58.200.131.2:1935/livetv/hunantv"
     # cap_path = r"D:\datasets\11_16\videos\shite.mp4"
-    cap_path = 0
+    cap_path = r"rtmp://live-push.bilivideo.com/live-bvc/?streamname=live_68783796_70316579&key=3d5eea1bd6edfd59c16b9bb9416f9a62&schedule=rtmp"
+    # cap_path = r"rtmp://127.0.0.1/demo/stream-1"
+    # cap_path = r"rtmp://202.115.17.6::51935/demo/stream-1"
+    # cap_path = r"http://192.168.1.37/live?port=1935&app=demo&stream=stream-1"
+    cap_path = r"rtmp://202.115.17.6:50010/live/test2"
+    # cap_path = 0
+
     # cap_path = r"D:\datasets\11_16\videos\shite.mp4"
     # cap_path = r"rtsp://admin:cs237239@192.168.1.80:554/h265/ch1/main/av_stream"
     # cap_path = r"rtsp://admin:cs237239@192.168.191.1:554/h265/ch1/main/av_stream"
@@ -91,8 +97,8 @@ if __name__ == '__main__':
     save_path = "./videos/{}.avi".format(time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime()))
     # save_path = "./videos/{}.mp4".format(time.strftime("%Y_%m_%d_%H_%M_%S", time.localtime()))
     start = time.time()
-    # get_cap(cap_path)
-    save_cap(cap_path, save_path)
+    get_cap(cap_path)
+    # save_cap(cap_path, save_path)
     end = time.time()
     total = end - start
     print("total time:{}".format(total))
