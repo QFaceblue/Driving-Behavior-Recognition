@@ -2,6 +2,7 @@ import os
 import numpy as np
 import copy
 
+# 文件夹下直接为类别文件夹
 def createTxt(root,filename):
     data_path = root
     dirs = os.listdir(data_path)
@@ -19,6 +20,7 @@ def createTxt(root,filename):
                     f.write("{} {}\n".format(fullpath, label))
             label += 1
 
+# 文件夹下按人分别建立子文件夹
 def createTxt2(root,filename):
     data_path = root
     dirs = os.listdir(data_path)
@@ -179,18 +181,33 @@ def createByLabel():
 # 转换标签
 def convert_Label():
 
+    # 9类转6类
     # source_txt = r"data/txt/12_23_12_addpre_train224.txt"
     # dest_txt = r"data/txt6/12_23_12_addpre_train224_6.txt"
-    source_txt = r"data/txt/12_23_12_addpre_test224.txt"
-    dest_txt = r"data/txt6/12_23_12_addpre_test224_6.txt"
-    source_txt = r"data/txt/12_23_12_addpre_train224_addcrop.txt"
-    dest_txt = r"data/txt6/12_23_12_addpre_train224_addcrop_6.txt"
-    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt"
-    dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_6.txt"
-    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt"
-    dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_6.txt"
-    convert_index = [0, -1, 1, 2, 3, 4, -1, -1, 5]
+    # source_txt = r"data/txt/12_23_12_addpre_test224.txt"
+    # dest_txt = r"data/txt6/12_23_12_addpre_test224_6.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_train224_addcrop.txt"
+    # dest_txt = r"data/txt6/12_23_12_addpre_train224_addcrop_6.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt"
+    # dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_6.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt"
+    # dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_6.txt"
+    # convert_index = [0, -1, 1, 2, 3, 4, -1, -1, 5]
 
+    # 9类转7类
+    source_txt = r"data/txt/12_23_12_addpre_train224.txt"
+    dest_txt = r"data/txt7/12_23_12_addpre_train224_7.txt"
+    source_txt = r"data/txt/12_23_12_addpre_test224.txt"
+    dest_txt = r"data/txt7/12_23_12_addpre_test224_7.txt"
+    source_txt = r"data/txt/12_23_12_addpre_train224_addcrop.txt"
+    dest_txt = r"data/txt7/12_23_12_addpre_train224_addcrop_7.txt"
+    source_txt = r"data/txt/12_23_12_addpre_test224_addcrop.txt"
+    dest_txt = r"data/txt7/12_23_12_addpre_test224_addcrop_7.txt"
+    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt"
+    dest_txt = r"data/txt7/12_23_12_addpre_train224_kg2my_aucv2_my_7.txt"
+    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt"
+    dest_txt = r"data/txt7/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_7.txt"
+    convert_index = [0, 6, 1, 2, 3, 4, 6, 6, 5]
     with open(source_txt, encoding='utf-8') as f:
         lines = f.readlines()
     new_lines = []
@@ -274,10 +291,10 @@ if __name__ == '__main__':
     # createTxt_100()
     # convert_imagenetVal()
     # create_imagenet_val()
-    # data_path = r"D:\drivedata\test_crop224"
-    # createTxt(data_path, "./data/txt/119_testcrop224.txt")
-    # data_path = r"D:\datasets\12_23_1\dataset\test_crop224"
-    # createTxt2(data_path, "data/txt/12_23_1_test_crop224.txt")
+    # data_path = r"D:\datasets\11_16\dataset\train"
+    # createTxt(data_path, "./data/txt_raw/1116_train.txt")
+    data_path = r"D:\datasets\12_23_1\dataset\train"
+    createTxt2(data_path, "data/txt_raw/1223_1_train.txt")
     # data_path = r"D:\datasets\12_23_2\dataset\train224"
     # createTxt2(data_path, "data/txt/12_23_2_train224.txt")
     # data_path = r"D:\dataset\VLR-40\train"
@@ -290,4 +307,4 @@ if __name__ == '__main__':
     # concatTxt()
     # countTxt()
     # addClass()
-    convert_Label()
+    # convert_Label()

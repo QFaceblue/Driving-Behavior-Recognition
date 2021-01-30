@@ -13,13 +13,12 @@ img = Image.open(img_path)
 # img = np.array(img)
 # print(img.shape)
 transform = transforms.Compose([
-
-    # transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+    transforms.RandomResizedCrop((224, 224), scale=(0.8, 1.0), ratio=(3. / 4., 4. / 3.), ),
     transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
-    transforms.RandomRotation(20, resample=False, expand=False, center=None),
+    transforms.RandomRotation(10, resample=False, expand=False, center=None),
     # transforms.RandomHorizontalFlip(p=0.5),
-    transforms.Resize((224, 224)),
-    transforms.RandomCrop(224, padding=16),
+    # transforms.Resize((224, 224)),
+    # transforms.RandomCrop(224, padding=16),
 
 ])
 

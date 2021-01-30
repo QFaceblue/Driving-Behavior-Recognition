@@ -141,10 +141,12 @@ def convert_ghostnet_0_3_kg():
 # python mo_onnx.py --input_model D:\code\EfficientNet-PyTorch-master\checkpoint\data_11_16\mobilenetv2\pre\0\111\mobilenetv2_1_my_224.onnx --output_dir D:\code\EfficientNet-PyTorch-master\checkpoint\data_11_16\mobilenetv2\pre\0\111\ --input_shape [1,3,224,224]
 def convert_mobilenetv2():
 
-    model = models.mobilenet_v2(pretrained=False, num_classes=9)
+    # model = models.mobilenet_v2(pretrained=False, num_classes=9)
+    # model = models.mobilenet_v2(pretrained=False, num_classes=6)
+    model = models.mobilenet_v2(pretrained=False, num_classes=7)
     # 加载模型参数
-    path = r"checkpoint/data_12_23/mobilenetv2/crop/444/mobilenetv2_1_crop_acc=90.9233.pth"
-    to_path = r"checkpoint/data_12_23/mobilenetv2/crop/444/mobilenetv2_1_crop_acc=90.9233.onnx"
+    path = r"checkpoint/data_12_23/class7/mobilenetv2/111/mobilenetv2_1_c7_acc=95.3052.pth"
+    to_path = r"checkpoint/data_12_23/class7/mobilenetv2/111/mobilenetv2_1_c7_acc=95.3052.onnx"
     # to_path = r"checkpoint/data_11_16/mobilenetv2/pre/777/mobilenetv2_1_my_224c.onnx"
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint["net"])
