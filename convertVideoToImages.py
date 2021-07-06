@@ -47,6 +47,9 @@ def convert_video_to_image(video_path, output_dir, img_size=None, interval_frame
 # python convertVideoToImages.py --input D:\datasets\11_16\videos --output D:\datasets\11_16\images
 # python convertVideoToImages.py --input D:\datasets\12_23_2\videos --output D:\datasets\12_23_2\images
 # python convertVideoToImages.py --input D:\datasets\12_23_1\raw\mp4 --output D:\datasets\12_23_1\raw_images
+# python convertVideoToImages.py --input D:\datasets\3_23\cam_chen\mp4 --output D:\datasets\3_23\cam_chen\raw_images
+# python convertVideoToImages.py --input D:\datasets\3_25\cam_he\mp4 --output D:\datasets\3_25\cam_he\raw_images
+
 if __name__ == "__main__":
     args = parser.parse_args()
     input_path = args.input

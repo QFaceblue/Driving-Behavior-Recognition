@@ -14,7 +14,7 @@ import time
 import os
 import math
 import copy
-from tensorboardX import SummaryWriter
+# from tensorboardX import SummaryWriter
 from utils import progress_bar, format_time
 import json
 from PIL import Image
@@ -25,8 +25,11 @@ from mnext import mnext
 from mobilenetv3 import MobileNetV3, mobilenetv3_s
 from mobilenetv3_2 import MobileNetV3_Small, MobileNetV3_Large
 from mobilenet import my_mobilenext, my_mobilenext_2
+from mobilenetv3_torch import mobilenet_v3_large, mobilenet_v3_small
 import onnxruntime
 import cv2
+import json
+import pandas as pd
 from mobilenetv2_cbam import MobileNetV2_cbam
 def softmax_np(x):
     x_row_max = x.max(axis=-1)
@@ -177,30 +180,41 @@ class MyDataset(Dataset):
 
         return sample
 
+# #
+# train_transform = transforms.Compose([
 #
-train_transform = transforms.Compose([
-
-    transforms.RandomResizedCrop((224, 224),  scale=(0.8, 1.0), ratio=(3. / 4., 4. / 3.), ),
-    # transforms.RandomResizedCrop((320, 320),  scale=(0.8, 1.0), ratio=(3. / 4., 4. / 3.), ),
-    transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
-    # transforms.RandomRotation(10, resample=False, expand=False, center=None),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                         std=[0.229, 0.224, 0.225])
-])
-
-val_transform = transforms.Compose([
-    transforms.Resize((224, 224)),
-    # transforms.Resize((320, 320)),
-    transforms.ToTensor(),
-    transforms.Normalize(mean=[0.485, 0.456, 0.406],
-                         std=[0.229, 0.224, 0.225])
-])
+#     transforms.RandomResizedCrop((224, 224),  scale=(0.8, 1.0), ratio=(3. / 4., 4. / 3.), ),
+#     # transforms.RandomResizedCrop((320, 320),  scale=(0.8, 1.0), ratio=(3. / 4., 4. / 3.), ),
+#     transforms.ColorJitter(brightness=0.1, contrast=0.1, saturation=0.1, hue=0.1),
+#     # transforms.RandomRotation(10, resample=False, expand=False, center=None),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+#
+# val_transform = transforms.Compose([
+#     transforms.Resize((224, 224)),
+#     # transforms.Resize((320, 320)),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
 
 # train_transform = transforms.Compose([
 #
 #     transforms.Resize((224, 224)),
+#     # transforms.ColorJitter(brightness=0.8, contrast=0.5, saturation=0.5, hue=0.1),
+#     # transforms.RandomRotation(10, resample=False, expand=False, center=None),
+#     # transforms.RandomCrop(224, padding=16),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+# train_transform = transforms.Compose([
+#
+#     transforms.Resize((224, 224)),
 #     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+#     # transforms.ColorJitter(brightness=0.8, contrast=0.5, saturation=0.5, hue=0.1),
 #     # transforms.RandomRotation(20, resample=False, expand=False, center=None),
 #     # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
 #     transforms.RandomRotation(10, resample=False, expand=False, center=None),
@@ -217,15 +231,92 @@ val_transform = transforms.Compose([
 #                          std=[0.229, 0.224, 0.225])
 # ])
 #
-# val_transform = transforms.Compose([
-#
-#     # transforms.RandomResizedCrop((500,500)),
-#     # transforms.CenterCrop((500,500)),
-#     # transforms.RandomHorizontalFlip(),
-#     # ToTensor()能够把灰度范围从0-255变换到0-1之间，
-#     # transform.Normalize()则把0-1变换到(-1,1).具体地说，对每个通道而言，Normalize执行以下操作：
-#     # image=(image-mean)/std
+
+train_transform = transforms.Compose([
+    transforms.Resize((240, 240)),
+    transforms.RandomCrop(224),
+    # transforms.Resize((224, 224)),
+    transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+    # transforms.RandomRotation(20, resample=False, expand=False, center=None),
+    # transforms.ColorJitter(brightness=0.2, contrast=0.2, saturation=0.2, hue=0.1),
+    transforms.RandomRotation(10, resample=False, expand=False, center=None),
+    # transforms.RandomHorizontalFlip(p=0.5),
+    # # transforms.RandomVerticalFlip(p=0.5),
+    # # ToTensor()能够把灰度范围从0-255变换到0-1之间，
+    # # transform.Normalize()则把0-1变换到(-1,1).具体地说，对每个通道而言，Normalize执行以下操作：
+    # # image=(image-mean)/std
+    # transforms.RandomResizedCrop((224,224)),
+    # transforms.Resize((224, 224)),
+    # transforms.RandomCrop(224, padding=16),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225])
+])
+
+# train_transform = transforms.Compose([
 #     transforms.Resize((224, 224)),
+#     # transforms.RandomCrop(320),
+#     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+#     transforms.RandomRotation(10, resample=False, expand=False, center=None),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+
+val_transform = transforms.Compose([
+    transforms.Resize((224, 224)),
+    transforms.ToTensor(),
+    transforms.Normalize(mean=[0.485, 0.456, 0.406],
+                         std=[0.229, 0.224, 0.225])
+])
+
+
+# train_transform = transforms.Compose([
+#     transforms.Resize((320, 320)),
+#     # transforms.RandomCrop(320),
+#     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+#     transforms.RandomRotation(10, resample=False, expand=False, center=None),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+#
+# val_transform = transforms.Compose([
+#     transforms.Resize((320, 320)),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+
+# train_transform = transforms.Compose([
+#     transforms.Resize((340, 340)),
+#     transforms.RandomCrop(320),
+#     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+#     transforms.RandomRotation(10, resample=False, expand=False, center=None),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+#
+# val_transform = transforms.Compose([
+#     transforms.Resize((320, 320)),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+
+# train_transform = transforms.Compose([
+#     transforms.Resize((160, 160)),
+#     # transforms.RandomCrop(320),
+#     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+#     transforms.RandomRotation(10, resample=False, expand=False, center=None),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
+#
+# val_transform = transforms.Compose([
+#     transforms.Resize((160, 160)),
 #     transforms.ToTensor(),
 #     transforms.Normalize(mean=[0.485, 0.456, 0.406],
 #                          std=[0.229, 0.224, 0.225])
@@ -246,20 +337,6 @@ val_transform = transforms.Compose([
 #     # # transforms.RandomResizedCrop((224,224)),
 #     # # transforms.Resize((224, 224)),
 #     transforms.RandomCrop(160, padding=16),
-#     transforms.ToTensor(),
-#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
-#                          std=[0.229, 0.224, 0.225])
-# ])
-#
-# val_transform = transforms.Compose([
-#
-#     # transforms.RandomResizedCrop((500,500)),
-#     # transforms.CenterCrop((500,500)),
-#     # transforms.RandomHorizontalFlip(),
-#     # ToTensor()能够把灰度范围从0-255变换到0-1之间，
-#     # transform.Normalize()则把0-1变换到(-1,1).具体地说，对每个通道而言，Normalize执行以下操作：
-#     # image=(image-mean)/std
-#     transforms.Resize((160, 160)),
 #     transforms.ToTensor(),
 #     transforms.Normalize(mean=[0.485, 0.456, 0.406],
 #                          std=[0.229, 0.224, 0.225])
@@ -286,8 +363,9 @@ start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 # num_classes = 100
 # num_classes = 10
 num_classes = 9
-# num_classes = 6
+# num_classes = 8
 # num_classes = 7
+# num_classes = 6
 # net = EfficientNet.from_pretrained('efficientnet-b0',num_classes=num_classes)
 
 # net = models.resnet18(pretrained=True)
@@ -300,9 +378,32 @@ num_classes = 9
 # net = models.mobilenet_v2(pretrained=False, num_classes=num_classes, width_mult=0.3)
 # net = models.mobilenet_v2(pretrained=False, num_classes=num_classes, width_mult=0.1)
 
+# net = models.mobilenet_v2(pretrained=False, width_mult=1.0)
+
 net = models.mobilenet_v2(pretrained=True, width_mult=1.0)
 num_in = net.classifier[1].in_features
 net.classifier[1] = nn.Linear(num_in, num_classes)
+
+# net = mobilenet_v3_small(pretrained=True)
+# # net = mobilenet_v3_large(pretrained=True)
+# num_in = net.classifier[3].in_features
+# net.classifier[3] = nn.Linear(num_in, num_classes)
+
+#
+# net = models.resnext50_32x4d(pretrained=True)
+# num_in = net.fc.in_features
+# net.fc = nn.Linear(num_in, num_classes)
+
+
+# # 加载模型权重，忽略不同
+# model_path = r"checkpoint/data_12_23/mobilenetv2/000/mobilenetv2_1_12_23_acc=92.1389.pth"
+# model_dict =net.state_dict()
+# checkpoint = torch.load(model_path, map_location=device)
+# pretrained_dict = checkpoint["net"]
+# # pretrained_dict = checkpoint
+# pretrained_dict = {k: v for k, v in pretrained_dict.items() if np.shape(model_dict[k]) ==  np.shape(v)}
+# model_dict.update(pretrained_dict)
+# net.load_state_dict(model_dict)
 
 # net = MobileNetV2_cbam(num_classes=num_classes, width_mult=1.0, add_location=16)
 #
@@ -416,6 +517,7 @@ net.classifier[1] = nn.Linear(num_in, num_classes)
 # self[index[i][j][k]][j][k] = src[i][j][k]  # if dim == 0
 # self[i][index[i][j][k]][k] = src[i][j][k]  # if dim == 1
 # self[i][j][index[i][j][k]] = src[i][j][k]  # if dim == 2
+
 def CrossEntropy(outputs, targets):
     log_softmax_outputs = F.log_softmax(outputs, dim=1)
     batch_size, class_num = outputs.shape
@@ -540,15 +642,51 @@ def change_lr9(epoch, T=6, factor=0.3, min=1e-3):
         return min
     return max((1 + math.cos(math.pi * epoch / T)) * mul / 2, min)
 
+def change_lr10(epoch, T=5, factor=0.3, min=1e-2):
+    mul = 1.
+    if epoch < T * 3:
+        mul = mul
+    elif epoch < T * 5:
+        mul = mul * factor
+    else:
+        return min
+    # print(max((1 + math.cos(math.pi * epoch/ T)) * mul/2, min))
+    return max((1 + math.cos(math.pi * epoch / T)) * mul / 2, min)
+
+def change_lr11(epoch, T=8, min=1e-3):
+    mul = 1.
+    if epoch < T:
+        mul = mul
+    else:
+        return min
+    # print(max((1 + math.cos(math.pi * epoch/ T)) * mul/2, min))
+    return max((1 + math.cos(math.pi * epoch / T)) * mul / 2, min)
+
+def change_lr12(epoch, T=6, factor=0.3, min=1e-3):
+    mul = 1.
+    if epoch < T:
+        mul = mul
+    elif epoch < T * 3:
+        mul = mul * factor
+    else:
+        return min
+    return max((1 + math.cos(math.pi * epoch / T)) * mul / 2, min)
+
 criterion = nn.CrossEntropyLoss()
 criterion = CrossEntropy
-epoches = 48
+# epoches = 48
+# epoches = 30
+# epoches = 30
+# epoches = 16
+# epoches = 30
 # optimizer = optim.Adam(net.parameters(), lr=5e-3)
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr9)
 # optimizer = optim.Adam(net.parameters(), lr=1e-2)
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr9)
-optimizer = optim.Adam(net.parameters(), lr=1e-3)
-scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr9)
+# optimizer = optim.Adam(net.parameters(), lr=1e-3)
+# scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr9)
+# optimizer = optim.Adam(net.parameters(), lr=1e-3)
+# scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr10)
 # optimizer = optim.SGD(net.parameters(), lr=1e-3)
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr9)
 # optimizer = optim.Adam(net.parameters(), lr=1e-2)
@@ -568,7 +706,23 @@ scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr9)
 
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr7)
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr8)
-# scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[4, 12], gamma=0.1)
+
+# epoches = 48
+# optimizer = optim.Adam(net.parameters(), lr=1e-3)
+# scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr9)
+# epoches = 30
+# optimizer = optim.Adam(net.parameters(), lr=1e-3)
+# scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr10)
+epoches = 18
+optimizer = optim.Adam(net.parameters(), lr=1e-3)
+scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr12)
+# epoches = 16
+# optimizer = optim.Adam(net.parameters(), lr=1e-3)
+# scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[6, 12], gamma=0.1)
+# epoches = 8
+# optimizer = optim.Adam(net.parameters(), lr=1e-3)
+# scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_lr11)
+
 net.to(device)
 
 # data_path = r"E:\Datasets\state-farm-distracted-driver-detection\imgs\train"
@@ -807,8 +961,73 @@ net.to(device)
 # val_dataset = MyDataset("data/txt7/12_23_12_addpre_test224_7.txt", val_transform)
 
 # txt_raw
-train_dataset = MyDataset("data/txt_raw/total_train.txt", train_transform)
-val_dataset = MyDataset("data/txt_raw/total_test.txt", val_transform)
+# train_dataset = MyDataset("data/txt_raw/total_train.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw/total_test.txt", val_transform)
+
+# train_dataset = MyDataset("data/txt_raw/total_train_c6.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw/total_test_c6.txt", val_transform)
+#
+# train_dataset = MyDataset("data/txt_raw/total_train_c7.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw/total_test_c7.txt", val_transform)
+
+
+
+#3_23
+# train_dataset = MyDataset("data/txt_3_23/bus_train.txt", train_transform)
+# val_dataset = MyDataset("data/txt_3_23/bus_test.txt", val_transform)
+
+# train_dataset = MyDataset("data/txt_3_23/he_train.txt", train_transform)
+# val_dataset = MyDataset("data/txt_3_23/he_test.txt", val_transform)
+
+# train_dataset = MyDataset("data/txt_3_23/wen_train.txt", train_transform)
+# val_dataset = MyDataset("data/txt_3_23/wen_test.txt", val_transform)
+
+# train_dataset = MyDataset("data/txt_3_23/he_wen_train.txt", train_transform)
+# val_dataset = MyDataset("data/txt_3_23/he_wen_test.txt", val_transform)
+
+# # 3_25
+# train_dataset = MyDataset("data/txt_3_25/train325.txt", train_transform)
+# val_dataset = MyDataset("data/txt_3_25/test325.txt", val_transform)
+
+# # 3_25 crop
+# train_dataset = MyDataset("data/txt_3_25/train325_crop.txt", train_transform)
+# val_dataset = MyDataset("data/txt_3_25/test325_crop.txt", val_transform)
+
+# 3-25_all
+# train_dataset = MyDataset("data/txt_3_25/train325_all.txt", train_transform)
+# val_dataset = MyDataset("data/txt_3_25/test325_all.txt", val_transform)
+
+# # 3-25_all crop
+# train_dataset = MyDataset("data/txt_raw_crop/total_train_crop.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw_crop/total_test_crop.txt", val_transform)
+
+# all class7_2
+# train_dataset = MyDataset("data/txt_raw/total_train_c7_2.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw/total_test_c7_2.txt", val_transform)
+
+# all class72_crop
+# train_dataset = MyDataset("data/txt_raw_crop/total_train_crop_72.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw_crop/total_test_crop_72.txt", val_transform)
+
+# # all class73_crop
+# train_dataset = MyDataset("data/txt_raw_crop/total_train_crop_73.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw_crop/total_test_crop_73.txt", val_transform)
+
+# # all class8
+# train_dataset = MyDataset("data/txt_raw/total_train_8.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw/total_test_8.txt", val_transform)
+
+# # all class8_crop
+# train_dataset = MyDataset("data/txt_raw_crop/total_train_crop_8.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw_crop/total_test_crop_8.txt", val_transform)
+
+# all class9
+# train_dataset = MyDataset("data/txt_raw/total_train.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw/total_test.txt", val_transform)
+
+# # # all class9_crop
+train_dataset = MyDataset("data/txt_raw_crop/total_train_crop.txt", train_transform)
+val_dataset = MyDataset("data/txt_raw_crop/total_test_crop.txt", val_transform)
 
 train_dataloader = DataLoader(dataset=train_dataset,
                               batch_size=64,
@@ -818,6 +1037,16 @@ val_dataloader = DataLoader(dataset=val_dataset,
                               batch_size=64,
                               shuffle=True,
                               num_workers=0)
+
+# train_dataloader = DataLoader(dataset=train_dataset,
+#                               batch_size=32,
+#                               shuffle=True,
+#                               num_workers=0)
+# val_dataloader = DataLoader(dataset=val_dataset,
+#                               batch_size=32,
+#                               shuffle=True,
+#                               num_workers=0)
+
 
 # Training
 def train(epoch):
@@ -983,6 +1212,8 @@ def train(epoch):
 # savepath = 'checkpoint/data_12_23/mobilenetv2/0/111/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre kg2my aucv2 change_lr9
 # savepath = 'checkpoint/data_12_23/mobilenetv2/0/222/' #  flip randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre change_lr9
 # savepath = 'checkpoint/data_12_23/mobilenetv2/0/333/' #  randcrop 16 rotation 10 colorjit 0.5 12_23_12_addpre kg2my aucv2 change_lr9
+# savepath = 'checkpoint/data_12_23/mobilenetv2/0/444/' # change_lr10 brightness=0.8 mypre
+# savepath = 'checkpoint/data_12_23/mobilenetv2/0/555/' # change_lr10 brightness=0.8 mypre
 
 # savepath = 'checkpoint/data_12_23/mobilenetv2/nopre/000/' #  nopre randcrop 16 rotation 10 colorjit 0.5 12_23_12_change_lr9 1e-3
 # savepath = 'checkpoint/data_12_23/mobilenetv2/nopre/111/' #  pre randcrop 16 rotation 10 colorjit 0.5 12_23_12_change_lr9 1e-3
@@ -1022,9 +1253,134 @@ def train(epoch):
 
 # dataset txt_raw
 # savepath = 'checkpoint/txt_raw/mobilenetv2/224/000/' # change_lr9 totol_test
-savepath = 'checkpoint/txt_raw/mobilenetv2/224/111/' # change_lr9 totol_test
-
+# savepath = 'checkpoint/txt_raw/mobilenetv2/224/111/' # change_lr9 totol_test
+# savepath = 'checkpoint/txt_raw/mobilenetv2/224/222/' # change_lr9 totol_test 240-》224
+# savepath = 'checkpoint/txt_raw/mobilenetv2/224/333/' # change_lr9 totol_test
+# savepath = 'checkpoint/txt_raw/mobilenetv2/224/444/' # change_lr9 totol_test 240-》224
 # savepath = 'checkpoint/txt_raw/mobilenetv2/320/000/' # change_lr9 totol_test
+
+# savepath = 'checkpoint/txt_raw/mobilenetv2/000/' # change_lr10 totol_test 240-》224
+# savepath = 'checkpoint/txt_raw/mobilenetv2/111/' # change_lr10 totol_test
+# savepath = 'checkpoint/txt_raw/mobilenetv2/222/' # change_lr10 totol_test brightness=0.8
+
+# savepath = 'checkpoint/txt_raw/mobilenetv2/class6/000/' # change_lr10 totol_test 240-》224 c9
+# savepath = 'checkpoint/txt_raw/mobilenetv2/class6/111/' # change_lr10 totol_test 240-》224
+# savepath = 'checkpoint/txt_raw/mobilenetv2/class6/222/' # change_lr10 totol_test
+# savepath = 'checkpoint/txt_raw/mobilenetv2/class6/333/' # change_lr10 totol_test brightness=0.8
+
+# savepath = 'checkpoint/txt_raw/mobilenetv2/class7/000/' # change_lr10 totol_test 240-》224
+# savepath = 'checkpoint/txt_raw/mobilenetv2/class7/111/' # change_lr10 totol_test
+# savepath = 'checkpoint/txt_raw/mobilenetv2/class7/222/' # change_lr10 totol_test brightness=0.8
+
+
+
+# 3_23
+# savepath = 'checkpoint/data_3_23/mobilenetv2/000/' # change_lr10 brightness=0.8
+# savepath = 'checkpoint/data_3_23/mobilenetv2/111/' # change_lr10 brightness=0.5 240>>224
+# savepath = 'checkpoint/data_3_23/mobilenetv2/222/' # change_lr10 no data augment
+
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he/000/' # change_lr10 brightness=0.5 240>>224
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he/111/' # change_lr10 brightness=0.8
+
+# savepath = 'checkpoint/data_3_23/mobilenetv2/wen/000/' # change_lr10 brightness=0.5 240>>224
+# savepath = 'checkpoint/data_3_23/mobilenetv2/wen/111/' # change_lr10 brightness=0.8
+
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he_wen/000/' # change_lr10 brightness=0.5 240>>224
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he_wen/111/' # change_lr10 brightness=0.8
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he_wen/222/' # change_lr10 brightness=0.8 nopre
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he_wen/333/' # change_lr10 brightness=0.8 mypre
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he_wen/333/' # change_lr10 brightness=0.5 mypre
+# savepath = 'checkpoint/data_3_23/mobilenetv2/he_wen/444/' # change_lr19 brightness=0.5
+
+# 325
+# savepath = 'checkpoint/data_3_25/mobilenetv2/000/' # change_lr10 brightness=0.5
+# savepath = 'checkpoint/data_3_25/mobilenetv2/111/' # change_lr9 brightness=0.5
+
+# 325 crop
+# savepath = 'checkpoint/data_3_25_crop/mobilenetv2/000/' # change_lr10 brightness=0.5
+# savepath = 'checkpoint/data_3_25_crop/mobilenetv2/111/' # change_lr9 brightness=0.5
+# savepath = 'checkpoint/data_3_25_crop/mobilenetv2/222/' # change_lr9 brightness=0.5 nopre
+
+
+# 325 all
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/111/' # change_lr9 brightness=0.5
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/222/' # change_lr9 brightness=0.5 nopre
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/333/' # change_lr9 brightness=0.5 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/444/' # change_lr9 brightness=0.5  crop nopre
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/555/' # change_lr9 brightness=0.5 crop 240->224
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/666/' # change_lr9 brightness=0.5 crop 240->224 nopre
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/777/' # change_lr9 brightness=0.5 240->224
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/888/' # change_lr9 brightness=0.5 240->224 nopre
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/16/000/' # 16 milestones brightness=0.5 240->224
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/16/111/' # 16 milestones brightness=0.5 240->224 crop
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/18/000/' # 18 change_lr12 brightness=0.5 240->224 crop
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/160/000/' # 18 change_lr12 milestones brightness=0.5 160 no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/160/111/' # 18 change_lr12 milestones brightness=0.5 160 crop no randcrop
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/224/000/' # 18 change_lr12 milestones brightness=0.5 224 no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/224/111/' # 18 change_lr12 milestones brightness=0.5 224 crop no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/224/222/' # 18 change_lr12 milestones brightness=0.5 224 no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/224/333/' # 18 change_lr12 milestones brightness=0.5 224 crop no randcrop
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/224/444/' # 18 change_lr12 milestones brightness=0.5 224 crop 240->224
+savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/224/555/' # 18 change_lr12 milestones brightness=0.5 224 crop 240->224
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/320/000/' # 18 change_lr12 milestones brightness=0.5 320 no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class9/320/111/' # 18 change_lr12 milestones brightness=0.5 320 crop no randcrop
+
+# class7_2
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class7_2/000/' # 16 milestones brightness=0.5 240->224
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class7_2/111/' # 16 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class7_2/222/' # change_lr10  brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class7_2/333/' # change_lr9  brightness=0.5 240->224 crop
+
+# class7_3
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class7_3/000/' # 16 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class7_3/111/' # change_lr10  brightness=0.5 240->224 crop
+
+# class8
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/000/' # 16 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/111/' # change_lr12  brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/222/' # 16 milestones brightness=0.5 240->224
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/333/' # 18 change_lr12 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/444/' # 18 change_lr12 milestones brightness=0.5 240->224
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/555/' # 18 change_lr12 milestones brightness=0.5 240->224 crop no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/666/' # 18 change_lr12 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/777/' # 18 change_lr12 milestones brightness=0.5 240->224 crop nopre
+
+# class8 320
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/320/000/' # 18 change_lr12 milestones brightness=0.5 320 crop no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/320/111/' # 18 change_lr12 milestones brightness=0.5 320 randcrop
+
+# class8 160
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/160/000/' # 18 change_lr12 milestones brightness=0.5 160 crop no randcrop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv2/class8/160/111/' # 18 change_lr12 milestones brightness=0.5 160 nocrop no randcrop
+
+
+# resnext50
+# savepath = 'checkpoint/data_3_25_all/resnext50/224/class8/000/' # 18 change_lr12 milestones brightness=0.5 240->224 crop
+
+# mobilenetv3_small
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_s/224/class8/000/' # 18 change_lr12 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_s/224/class8/111/' # 18 change_lr12 milestones brightness=0.5 240->224
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_s/224/class9/000/' # 18 change_lr12 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_s/224/class9/111/' # 18 change_lr12 milestones brightness=0.5 240->224
+
+# mobilenetv3_LARGE
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_L/224/class8/000/' # 18 change_lr12 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_L/224/class8/111/' # 18 change_lr12 milestones brightness=0.5 240->224
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_L/320/class8/000/' # 18 change_lr12 milestones brightness=0.5 320 crop
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_L/224/class9/000/' # 18 change_lr12 milestones brightness=0.5 240->224 crop
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_L/224/class9/111/' # 18 change_lr12 milestones brightness=0.5 240->224
+
+# savepath = 'checkpoint/data_3_25_all/mobilenetv3_L/320/class9/111/' # 18 change_lr12 milestones brightness=0.5 320
 
 def val(epoch):
     global best_val_acc
@@ -1097,8 +1453,41 @@ def val(epoch):
         # torch.save(state, savepath + 'mobilenetv2_1_c6_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mobilenetv2_1_c7_acc={:.4f}.pth'.format(acc))
 
-        torch.save(state, savepath + 'mobilenetv2_224_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_224_crop_72_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_224_crop_73_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_224_crop_8_acc={:.4f}.pth'.format(acc))
+
+        # torch.save(state, savepath + 'mobilenetv2_160_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_160_crop_acc={:.4f}.pth'.format(acc))
+
+        # torch.save(state, savepath + 'mobilenetv2_224_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_224_crop_acc={:.4f}.pth'.format(acc))
+
         # torch.save(state, savepath + 'mobilenetv2_320_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_320_crop_acc={:.4f}.pth'.format(acc))
+
+        # torch.save(state, savepath + 'mobilenetv2_320_crop_8_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_160_crop_8_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_160_8_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_224_8_acc={:.4f}.pth'.format(acc))
+
+        # torch.save(state, savepath + 'mobilenetv2_224_9_acc={:.4f}.pth'.format(acc))
+        torch.save(state, savepath + 'mobilenetv2_224_9_crop_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_320_acc={:.4f}.pth'.format(acc))
+
+        # torch.save(state, savepath + 'resnext50_224_8_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_s_224_8_crop_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_s_224_crop_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_s_224_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_l_224_8_crop_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_s_224_9_crop_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_s_224_9_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_s_224_8_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_l_224_8_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_l_224_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_l_224_crop_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_l_224_9_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mv3_l_224_9_crop_acc={:.4f}.pth'.format(acc))
         best_val_acc = acc
     return average_loss, test_acc
 
@@ -1185,9 +1574,11 @@ def main(epoches=epoches):
 
 
 def net_test():
-    # num_classes = 9
-    num_classes = 6
-    num_classes = 7
+
+    # num_classes = 6
+    # num_classes = 7
+    # num_classes = 8
+    num_classes = 9
     net = models.mobilenet_v2(pretrained=False, num_classes=num_classes, width_mult=1.0)
     # # model_path = r"checkpoint/data_11_16/mobilenetv2/pre/555/mobilenetv2_1_my_acc=96.1749.pth" # crop 160=0.7486338797814208
     # # model_path = r"checkpoint/data_11_16/mobilenetv2/pre/222/mobilenetv2_1_my_acc=92.3497.pth"  # 160=0.5846994535519126
@@ -1202,12 +1593,18 @@ def net_test():
     # model_path = r"checkpoint/data_12_23/mobilenetv2/0/333/mobilenetv2_1_12_23_acc=84.8983.pth"
     # model_path = r"checkpoint/data_12_23/mobilenetv2/crop/333/mobilenetv2_1_crop_acc=90.8059.pth"
     # model_path = r"checkpoint/data_12_23/mobilenetv2/crop/444/mobilenetv2_1_crop_acc=90.9233.pth"
+    # model_path = r"checkpoint/data_3_25_all/mobilenetv2/111/mobilenetv2_224_acc=85.6154.pth"
 
+    model_path = r"checkpoint/data_3_25_all/mobilenetv2/class8/666/mobilenetv2_224_8_acc=90.5516.pth"
+
+    model_path = r"checkpoint/data_3_25_all/mobilenetv2/555/mobilenetv2_224_crop_acc=89.1415.pth"
+
+    model_path = r"checkpoint/data_3_25_all/mobilenetv2/111/mobilenetv2_224_acc=85.6154.pth"
     # class6
-    model_path = r"checkpoint/data_12_23/class6/mobilenetv2/222/mobilenetv2_1_c6_acc=95.1313.pth"
+    # model_path = r"checkpoint/data_12_23/class6/mobilenetv2/222/mobilenetv2_1_c6_acc=95.1313.pth"
 
     # class7
-    model_path = r"checkpoint/data_12_23/class7/mobilenetv2/000/mobilenetv2_1_c7_acc=92.0188.pth"
+    # model_path = r"checkpoint/data_12_23/class7/mobilenetv2/000/mobilenetv2_1_c7_acc=92.0188.pth"
 
     # net = mnext(num_classes=num_classes, width_mult=1.)
     # model_path = r"checkpoint/data_12_23/mnext/000/mnext_1_12_23_acc=92.1753.pth"
@@ -1239,15 +1636,24 @@ def net_test():
     # test_dataset = MyDataset("data/txt/12_23_1_test224.txt", test_transform)
     # test_dataset = MyDataset("data/txt/12_23_2_test224.txt", test_transform)
     # test_dataset = MyDataset("data/txt/12_23_12_test224.txt", test_transform)
+    # test_dataset = MyDataset("data/txt/12_23_12_addpre_test224.txt", test_transform)
     # test_dataset = MyDataset("data/txt/12_23_12_addpre_test_crop224.txt", test_transform)
+    # test_dataset = MyDataset("data/txt_raw/total_test.txt", test_transform)
 
     # class6
-    test_dataset = MyDataset("data/txt6/12_23_12_addpre_test224_6.txt", test_transform)
+    # test_dataset = MyDataset("data/txt6/12_23_12_addpre_test224_6.txt", test_transform)
     # test_dataset = MyDataset("data/txt6/12_23_12_addpre_test224_addcrop_6.txt", test_transform)
 
     # class7
-    test_dataset = MyDataset("data/txt7/12_23_12_addpre_test224_7.txt", test_transform)
+    # test_dataset = MyDataset("data/txt7/12_23_12_addpre_test224_7.txt", test_transform)
     # test_dataset = MyDataset("data/txt7/12_23_12_addpre_test224_addcrop_7.txt", test_transform)
+
+    # class8
+    # all class8
+    # test_dataset = MyDataset("data/txt_raw/total_test_8.txt", test_transform)
+    # test_dataset = MyDataset("data/txt_raw_crop/total_test_crop_8.txt", test_transform)
+    # test_dataset = MyDataset("data/txt_raw_crop/total_test_crop.txt", test_transform)
+    test_dataset = MyDataset("data/txt_raw/total_test.txt", test_transform)
     test_dataloader = DataLoader(dataset=test_dataset,
                                  batch_size=64,
                                  shuffle=True,
@@ -1255,7 +1661,6 @@ def net_test():
 
     # Confusion_matrix
     cm = np.zeros((num_classes, num_classes), dtype=np.int)
-
     with torch.no_grad():
         for batch_idx, (inputs, targets) in enumerate(test_dataloader):
             inputs, targets = inputs.to(device), targets.to(device)
@@ -1280,11 +1685,59 @@ def net_test():
         labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "整理仪容", "接电话"]
     elif num_classes == 6:
         labels = ["正常",  "喝水", "吸烟", "操作中控", "玩手机", "接电话"]
-    else:
+    elif num_classes == 7:
         labels = ["正常",  "喝水", "吸烟", "操作中控", "玩手机", "接电话", "其他"]
+    else:
+        labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "接电话"]
     print(labels)
     print("row:target   col:predict")
     print(cm)
+    true_label = np.zeros((num_classes, ), dtype=np.int)
+    predicted_label = np.zeros((num_classes,), dtype=np.int)
+    total = 0
+    for i in range(num_classes):
+        for j in range(num_classes):
+            true_label[i] += cm[i][j]
+            predicted_label[i] += cm[j][i]
+            total += cm[i][j]
+    print("true label:", true_label)
+    print("predicted label:", predicted_label)
+    TP = np.zeros((num_classes, ), dtype=np.int)
+    FP = np.zeros((num_classes,), dtype=np.int)
+    FN = np.zeros((num_classes,), dtype=np.int)
+    TN = np.zeros((num_classes,), dtype=np.int)
+    Accuracy = np.zeros((num_classes,), dtype=np.float)
+    Precision = np.zeros((num_classes,), dtype=np.float)
+    Recall = np.zeros((num_classes,), dtype=np.float)
+    F1 = np.zeros((num_classes,), dtype=np.float)
+    for i in range(num_classes):
+        TP[i] = cm[i][i]
+        FP[i] = true_label[i] - TP[i]
+        FN[i] = predicted_label[i] - TP[i]
+        TN[i] = total - true_label[i] - FN[i]
+        Accuracy[i] = (TP[i]+TN[i])/total
+        Precision[i] = TP[i]/predicted_label[i]
+        Recall[i] = TP[i]/true_label[i]
+        F1[i] = Precision[i]*Recall[i]/(Precision[i]+Recall[i])*2
+    print("TP:", TP)
+    print("TN:", TN)
+    print("FP:", FP)
+    print("FN:", FN)
+    print("Accuracy:", Accuracy)
+    print("Precision:", Precision)
+    print("Recall:", Recall)
+    print("F1:", F1)
+    dict = {}
+    dict["准确率"] = Accuracy.tolist() # 样本被分类正确的概率, 包括TP和TF
+    dict["精确率"] = Precision.tolist() # 样本识别正确的概率，
+    dict["召回率"] = Recall.tolist() # 样本被正确识别出的概率，检出率
+    dict["F1-score"] = F1.tolist()
+    test_path = os.path.dirname(model_path)
+    with open(os.path.join(test_path, "test.json"), "w", encoding='utf-8') as f:
+        json.dump(dict, f)
+    # 保存excel
+    df = pd.DataFrame(dict, index=labels)
+    df.to_excel(os.path.join(test_path, 'test.xlsx'))
 
 # 配置环境变量
 # cd D:\Program Files (x86)\Intel\openvino_2020.3.341\bin

@@ -12,12 +12,12 @@ import time
 rtmpUrl = "rtmp://192.168.2.86:50010/live/test2"
 rtmpUrl = "rtmp://202.115.17.6:50010/sign/test2"
 rtmpUrl = "rtmp://202.115.17.6:50010/hls/test2"
-rtmpUrl = "rtmp://202.115.17.6:40000/http_flv/test"
+rtmpUrl = "rtmp://192.168.2.222:50000/http_flv/test_raw"
 # rtmpUrl = "rtmp://127.0.0.1/demo/stream-1" # http://localhost/live?app=demo&stream=stream-1
 # rtmpUrl = "rtmp://127.0.0.1:1935/demo/stream-1" # http://localhost/live?app=demo&stream=stream-1
 # rtmpUrl = "rtmp://202.115.17.6:1935/demo/stream-1" # http://202.115.17.6:61935/live?app=demo&stream=stream-1
-# cap_path = 0
-cap_path = r"rtmp://58.200.131.2:1935/livetv/hunantv"
+cap_path = 0
+# cap_path = r"rtmp://58.200.131.2:1935/livetv/hunantv"
 # cap_path = "http://112.50.243.8/PLTV/88888888/224/3221225900/1.m3u8"
 # cap_path = r"rtsp://admin:admin@192.168.1.80:554/h265/ch1/main/av_stream"
 # cap_path = r"rtsp://admin:cs237239@192.168.1.80:554/h265/ch1/main/av_stream"
@@ -81,11 +81,11 @@ while (cap.isOpened()):
         else:
             print("Can't receive frame (stream end?). Exiting ...")
             break
-    if cap_path ==0:    
-            # 垂直翻转
-            frame = cv.flip(frame, 0)
-            # 水平翻转
-            frame = cv.flip(frame, 1)
+    # if cap_path ==0:
+    #         # 垂直翻转
+    #         frame = cv.flip(frame, 0)
+    #         # 水平翻转
+    #         frame = cv.flip(frame, 1)
     if draw:
         curr_time = time.time()
         exec_time = curr_time - prev_time

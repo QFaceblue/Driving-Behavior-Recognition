@@ -2,8 +2,15 @@ import os
 
 # source_dir = r"D:\drivedata\11-9\mkv"
 # dest_dir = r"D:\drivedata\11-9\mp4"
-source_dir = r"D:\datasets\12_23_1\raw\mkv"
-dest_dir = r"D:\datasets\12_23_1\raw\mp4"
+# source_dir = r"D:\datasets\12_23_1\raw\mkv"
+# dest_dir = r"D:\datasets\12_23_1\raw\mp4"
+
+
+# source_dir = r"D:\datasets\3_23\cam_wen\mkv"
+# dest_dir = r"D:\datasets\3_23\cam_wen\mp4"
+source_dir = r"D:\datasets\3_25\cam_he\mkv"
+dest_dir = r"D:\datasets\3_25\cam_he\mp4"
+
 os.makedirs(dest_dir, exist_ok=True)
 for video_name in os.listdir(source_dir):
     file_path = os.path.join(source_dir, video_name)

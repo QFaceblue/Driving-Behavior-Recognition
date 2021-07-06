@@ -32,6 +32,8 @@ def createTxt2(root,filename):
             print(path)
             label = 0
             for c in os.listdir(path):
+                if c =="delete":
+                    continue
                 img_path = os.path.join(path, c)
                 if os.path.isdir(img_path):
                     imgs = os.listdir(img_path)
@@ -177,7 +179,16 @@ def createByLabel():
 # c9: talking to passenger
 
 # old labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "整理仪容", "接电话"]
-# new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话"]
+# new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话"] 6
+# new labels = ["正常", "侧视", "喝水", "吸烟", "玩手机", "接电话"] 6 2
+
+# new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话","其他"] 7
+
+# new labels = ["正常", "侧视", "喝水", "吸烟", "玩手机", "接电话", "其他] 7 2
+
+# old labels = ["正常", "喝水", "吸烟", "玩手机", "侧身拿东西", "接电话",其他] 7 3
+
+# new labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "接电话"] 8
 # 转换标签
 def convert_Label():
 
@@ -192,22 +203,65 @@ def convert_Label():
     # dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_6.txt"
     # source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt"
     # dest_txt = r"data/txt6/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_6.txt"
+
+    # source_txt = r"data/txt_raw/total_train.txt"
+    # dest_txt = r"data/txt_raw/total_train_c6.txt"
+    # source_txt = r"data/txt_raw/total_test.txt"
+    # dest_txt = r"data/txt_raw/total_test_c6.txt"
     # convert_index = [0, -1, 1, 2, 3, 4, -1, -1, 5]
 
-    # 9类转7类
-    source_txt = r"data/txt/12_23_12_addpre_train224.txt"
-    dest_txt = r"data/txt7/12_23_12_addpre_train224_7.txt"
-    source_txt = r"data/txt/12_23_12_addpre_test224.txt"
-    dest_txt = r"data/txt7/12_23_12_addpre_test224_7.txt"
-    source_txt = r"data/txt/12_23_12_addpre_train224_addcrop.txt"
-    dest_txt = r"data/txt7/12_23_12_addpre_train224_addcrop_7.txt"
-    source_txt = r"data/txt/12_23_12_addpre_test224_addcrop.txt"
-    dest_txt = r"data/txt7/12_23_12_addpre_test224_addcrop_7.txt"
-    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt"
-    dest_txt = r"data/txt7/12_23_12_addpre_train224_kg2my_aucv2_my_7.txt"
-    source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt"
-    dest_txt = r"data/txt7/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_7.txt"
-    convert_index = [0, 6, 1, 2, 3, 4, 6, 6, 5]
+    # 9类转6类 2 new labels = ["正常", "侧视", "喝水", "吸烟", "玩手机", "接电话"]
+    source_txt = r"data/txt_raw/total_train.txt"
+    dest_txt = r"data/txt_raw/total_train_62.txt"
+    convert_index = [0, 1, 2, 3, -1, 4, -1, -1, 5]
+
+    # # 9类转7类
+    # source_txt = r"data/txt/12_23_12_addpre_train224.txt"
+    # dest_txt = r"data/txt7/12_23_12_addpre_train224_7.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_test224.txt"
+    # dest_txt = r"data/txt7/12_23_12_addpre_test224_7.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_train224_addcrop.txt"
+    # dest_txt = r"data/txt7/12_23_12_addpre_train224_addcrop_7.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_test224_addcrop.txt"
+    # dest_txt = r"data/txt7/12_23_12_addpre_test224_addcrop_7.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my.txt"
+    # dest_txt = r"data/txt7/12_23_12_addpre_train224_kg2my_aucv2_my_7.txt"
+    # source_txt = r"data/txt/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop.txt"
+    # dest_txt = r"data/txt7/12_23_12_addpre_train224_kg2my_aucv2_my_addcrop_7.txt"
+
+    # source_txt = r"data/txt_raw/total_train.txt"
+    # dest_txt = r"data/txt_raw/total_train_c7.txt"
+    # # source_txt = r"data/txt_raw/total_test.txt"
+    # # dest_txt = r"data/txt_raw/total_test_c7.txt"
+    # convert_index = [0, 6, 1, 2, 3, 4, 6, 6, 5]
+
+    # 9类转7类2
+    # source_txt = r"data/txt_raw/total_train.txt"
+    # dest_txt = r"data/txt_raw/total_train_c7_2.txt"
+    # source_txt = r"data/txt_raw/total_test.txt"
+    # dest_txt = r"data/txt_raw/total_test_c7_2.txt"
+    # source_txt = r"data/txt_raw_crop/total_train_crop.txt"
+    # dest_txt = r"data/txt_raw_crop/total_train_crop_72.txt"
+    # source_txt = r"data/txt_raw_crop/total_test_crop.txt"
+    # dest_txt = r"data/txt_raw_crop/total_test_crop_72.txt"
+    # convert_index = [0, 1, 2, 3, 6, 4, 6, 6, 5]
+
+    # 9类转7类3
+    # old labels = ["正常", "喝水", "吸烟", "玩手机", "侧身拿东西", "接电话",其他] 7 3
+    # source_txt = r"data/txt_raw_crop/total_train_crop.txt"
+    # dest_txt = r"data/txt_raw_crop/total_train_crop_73.txt"
+    # source_txt = r"data/txt_raw/total_test.txt"
+    # dest_txt = r"data/txt_raw/total_test_73.txt"
+    # convert_index = [0, 6, 1, 2, 6, 3, 4, 6, 5]
+
+    # # 9类转8类
+    # # new labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "接电话"] 8
+    # source_txt = r"data/txt_raw_crop/total_test_crop.txt"
+    # dest_txt = r"data/txt_raw_crop/total_test_crop_8.txt"
+    # source_txt = r"data/txt_raw/total_train.txt"
+    # dest_txt = r"data/txt_raw/total_train_8.txt"
+    # convert_index = [0, 1, 2, 3, 4, 5, 6, -1, 7]
+
     with open(source_txt, encoding='utf-8') as f:
         lines = f.readlines()
     new_lines = []
@@ -291,12 +345,12 @@ if __name__ == '__main__':
     # createTxt_100()
     # convert_imagenetVal()
     # create_imagenet_val()
-    # data_path = r"D:\datasets\11_16\dataset\train"
-    # createTxt(data_path, "./data/txt_raw/1116_train.txt")
-    data_path = r"D:\datasets\12_23_1\dataset\train"
-    createTxt2(data_path, "data/txt_raw/1223_1_train.txt")
-    # data_path = r"D:\datasets\12_23_2\dataset\train224"
-    # createTxt2(data_path, "data/txt/12_23_2_train224.txt")
+    # data_path = r"D:\datasets\11_16\dataset\test"
+    # createTxt(data_path, "./data/txt_raw_crop/1116_test_crop.txt")
+    # data_path = r"D:\datasets\12_23_2\dataset\test_crop"
+    # createTxt2(data_path, "./data/txt_raw_crop/12_23_2_test_crop.txt")
+    # data_path = r"D:\datasets\3_25\cam_he\dataset\train_crop"
+    # createTxt2(data_path, "data/txt_3_25/train325_crop.txt")
     # data_path = r"D:\dataset\VLR-40\train"
     # convertName(data_path)
     # source = r"./data/imagenet/imagenet2012_trains.txt"
@@ -307,4 +361,4 @@ if __name__ == '__main__':
     # concatTxt()
     # countTxt()
     # addClass()
-    # convert_Label()
+    convert_Label()
