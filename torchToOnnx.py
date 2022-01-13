@@ -13,6 +13,7 @@ from ghost_net import ghost_net
 from mobilenetv3 import MobileNetV3
 from ghostnet import ghostnet
 from mnext import mnext
+from mobilenetv3_torch import mobilenet_v3_large, mobilenet_v3_small
 
 # RuntimeError: ONNX export failed: Couldn't export Python operator SwishImplementation
 # 解决办法 model.set_swish(memory_efficient=False)
@@ -27,6 +28,9 @@ from mnext import mnext
 # python mo_onnx.py --input_model D:\code\EfficientNet-PyTorch-master\checkpoint\data_12_23\mobilenetv2\888\mobilenetv2_1_12_23_acc=91.6275.onnx --output_dir D:\code\EfficientNet-PyTorch-master\checkpoint\data_12_23\mobilenetv2\8888\ --input_shape [1,3,224,224] --data_type FP16
 # python mo_onnx.py --input_model D:\code\EfficientNet-PyTorch-master\checkpoint\B0\000\B0_acc=99.8528.onnx --output_dir D:\code\EfficientNet-PyTorch-master\checkpoint\B0\000\ --input_shape [1,3,224,224]
 # python mo_onnx.py --input_model D:\code\EfficientNet-PyTorch-master\checkpoint\resnet18\111\resnet18_kg.onnx --output_dir D:\code\EfficientNet-PyTorch-master\checkpoint\resnet18\111\ --input_shape [1,3,224,224]
+
+from mobilenetv2_cbam import MobileNetV2_cbam, MobileNetV2_s, MobileNetV2, MobileNetV2_s2, \
+    MobileNetV2_s3, MobileNetV2_s4, MobileNetV2_sgb, MobileNetV2_sgb_sa, MobileNetV2_sgb_sa2
 def convert():
 
     model = EfficientNet.from_name('efficientnet-b0',num_classes=10)
@@ -60,10 +64,10 @@ def convert_resnet18():
 
 def convert_resnet18_kg():
 
-    model = models.resnet18(pretrained=False,num_classes=10)
+    model = models.resnet18(pretrained=False,num_classes=8)
     # 加载模型参数
-    path = r"checkpoint/resnet18/111/resnet18_kg_acc=99.3310.pth"
-    to_path = r"checkpoint/resnet18/111/resnet18_kg_acc=99.3310.onnx"
+    path = r"checkpoint/paper_test/resnet18/pre/crop/000/resnet18_8_crop_acc=90.1147.pth"
+    to_path = r"checkpoint/paper_test/resnet18/pre/crop/000/resnet18_8_crop.onnx"
 
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint["net"])
@@ -141,16 +145,46 @@ def convert_ghostnet_0_3_kg():
 # python mo_onnx.py --input_model D:\code\EfficientNet-PyTorch-master\checkpoint\data_11_16\mobilenetv2\pre\0\111\mobilenetv2_1_my_224.onnx --output_dir D:\code\EfficientNet-PyTorch-master\checkpoint\data_11_16\mobilenetv2\pre\0\111\ --input_shape [1,3,224,224]
 def convert_mobilenetv2():
 
-    # model = models.mobilenet_v2(pretrained=False, num_classes=9)
+    model = models.mobilenet_v2(pretrained=False, num_classes=9)
     # model = models.mobilenet_v2(pretrained=False, num_classes=6)
     # model = models.mobilenet_v2(pretrained=False, num_classes=7)
-    model = models.mobilenet_v2(pretrained=False, num_classes=8)
+    # model = models.mobilenet_v2(pretrained=False, num_classes=8)
     # 加载模型参数
     # path = r"checkpoint/data_3_25_all/mobilenetv2/111/mobilenetv2_224_acc=85.6154.pth"
     # to_path = r"checkpoint/data_3_25_all/mobilenetv2/111/mobilenetv2_224_acc=85.6154.onnx"
 
-    path = r"checkpoint/data_3_25_all/mobilenetv2/class8/666/mobilenetv2_224_8_acc=90.5516.pth"
-    to_path = r"checkpoint/data_3_25_all/mobilenetv2/class8/666/mobilenetv2_224_8_acc=90.5516.onnx"
+    # path = r"checkpoint/data_3_25_all/mobilenetv2/class8/666/mobilenetv2_224_8_acc=90.5516.pth"
+    # to_path = r"checkpoint/data_3_25_all/mobilenetv2/class8/666/mobilenetv2_224_8_acc=90.5516.onnx"
+    path = r"checkpoint/paper_test/mobilenetv2/pre/bus/444/mobilenetv2_acc=84.3046.pth"
+    to_path = r"checkpoint/paper_test/mobilenetv2/pre/bus/444/mobilenetv2_bus.onnx"
+    # path = r"checkpoint/paper_test/mobilenetv2/pre/bus/555/mobilenetv2_8_acc=85.2596.pth"
+    # to_path = r"checkpoint/paper_test/mobilenetv2/pre/bus/555/mobilenetv2_8_bus.onnx"
+    checkpoint = torch.load(path)
+    model.load_state_dict(checkpoint["net"])
+    print("loaded model with acc:{}".format(checkpoint["acc"]))
+    model.cuda()
+    dummy_input = torch.randn(1, 3, 224, 224, device='cuda')
+    # dummy_input = torch.randn(1, 3, 160, 160, device='cuda')
+    torch.onnx.export(model, dummy_input, to_path, verbose=True)
+
+def convert_mobilenetv2_X():
+
+    # model = MobileNetV2(num_classes=9)
+    # # 加载模型参数
+    # path = r"checkpoint/paper_test/ours/mobilenetv2/pre/000/mobilenetv2_acc=83.7205.pth"
+    # to_path = r"checkpoint/paper_test/ours/mobilenetv2/pre/000/mobilenetv2.onnx"
+    # model = MobileNetV2_s4(num_classes=9)
+    # # 加载模型参数
+    # path = r"checkpoint/paper_test/ours/mobilenetv2_s4/pre/000/mobilenetv2_s4_acc=83.4404.pth"
+    # to_path = r"checkpoint/paper_test/ours/mobilenetv2_s4/pre/000/mobilenetv2_s4.onnx"
+    # model = MobileNetV2_sgb_sa2(num_classes=9)
+    # # 加载模型参数
+    # path = r"checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/000/mobilenetv2_sgb_sa2_acc=83.2262.pth"
+    # to_path = r"checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/000/mobilenetv2_sgb_sa2.onnx"
+    model = ghostnet(num_classes=9)
+    # 加载模型参数
+    path = r"checkpoint/paper_test/ours/ghostnet/pre/111/ghostnet_acc=81.5620.pth"
+    to_path = r"checkpoint/paper_test/ours/ghostnet/pre/111/ghostnet.onnx"
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint["net"])
     print("loaded model with acc:{}".format(checkpoint["acc"]))
@@ -167,10 +201,10 @@ def convert_mobilenetv2():
 # python mo_onnx.py --input_model D:\code\EfficientNet-PyTorch-master\checkpoint\data_12_23\mnext\000\mnext_1_12_23_acc=92.1753.onnx --output_dir D:\code\EfficientNet-PyTorch-master\checkpoint\data_12_23\mnext\000\ --input_shape [1,3,224,224]
 def convert_mnext():
 
-    model = mnext(num_classes=9, width_mult=1.)
+    model = mnext(num_classes=8, width_mult=1.)
     # 加载模型参数
-    path = r"checkpoint/data_12_23/mnext/000/mnext_1_12_23_acc=92.1753.pth"
-    to_path = r"checkpoint/data_12_23/mnext/000/mnext_1_12_23_acc=92.1753.onnx"
+    path = r"checkpoint/paper_test/ours/mnext/class8/000/mnext_8_acc=86.5647.pth"
+    to_path = r"checkpoint/paper_test/ours/mnext/class8/000/mnext_8.onnx"
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint["net"])
     print("loaded model with acc:{}".format(checkpoint["acc"]))
@@ -227,12 +261,12 @@ def convert_mobilenetv2_05_kaggle():
     torch.onnx.export(model, dummy_input, to_path, verbose=True)
 
 def convert_mobilenetv3():
-    num_classes = 9
-    model = MobileNetV3(n_class=num_classes, mode="small", dropout=0.2, width_mult=1.0)
-    # model = MobileNetV3(n_class=num_classes, mode="large", dropout=0.2, width_mult=1.0)
+    num_classes = 8
+    model = mobilenet_v3_small(pretrained=False, num_classes=num_classes)
+    # model = mobilenet_v3_large(pretrained=False, num_classes=num_classes)
     # 加载模型参数
-    path = r"checkpoint/mobilenetv3/000/moblienetv3_s_my_acc=65.4676.pth"
-    to_path = r"checkpoint/mobilenetv3/000/moblienetv3_s_my_acc=65.4676.onnx"
+    path = r"checkpoint/paper_test/mobilenetv_small/pre/111/mobilenetv3_s_8_acc=82.6324.pth"
+    to_path = r"checkpoint/paper_test/mobilenetv_small/pre/111/mobilenetv3_s_8.onnx"
 
     checkpoint = torch.load(path)
     model.load_state_dict(checkpoint["net"])
@@ -508,7 +542,8 @@ if __name__ == '__main__':
     # convert_ghostnet_1_my()
     # convert_ghostnet_0_5_kg()
     # convert_ghostnet_0_3_kg()
-    convert_mobilenetv2()
+    # convert_mobilenetv2()
+    convert_mobilenetv2_X()
     # convert_mnext()
     # convert_shufflenetv2()
     # convert_mobilenetv2_kaggle()

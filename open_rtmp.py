@@ -76,7 +76,8 @@ if __name__ == '__main__':
     # cap_path = r"http://192.168.1.37/live?port=1935&app=demo&stream=stream-1"
     cap_path = r"rtmp://202.115.17.6:50010/live/test2"
     cap_path = r"rtmp://202.115.17.6:40000/http_flv/test"
-    cap_path = r"http://192.168.2.222/live?port=50000&app=http_flv&stream=test_raw"
+    # cap_path = r"http://192.168.2.222/live?port=50000&app=http_flv&stream=test_raw"
+    cap_path = r"rtmp://192.168.8.103:1935/live/test_raw"
     # cap_path = r"rtmp://202.115.17.6:40000/http_flv/test_detect"
     # cap_path = r"rtmp://202.115.17.6:40000/http_flv/test_raw"
     # cap_path = 0

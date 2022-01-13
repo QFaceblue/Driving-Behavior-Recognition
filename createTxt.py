@@ -6,7 +6,7 @@ import copy
 def createTxt(root,filename):
     data_path = root
     dirs = os.listdir(data_path)
-    dirs.sort()
+    # dirs.sort()
     print(dirs)
     with open(filename, "w", encoding="utf-8") as f:
         label = 0
@@ -179,7 +179,7 @@ def createByLabel():
 # c9: talking to passenger
 
 # old labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "整理仪容", "接电话"]
-# new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话"] 6
+# new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话"] 6 [0,-1,1,2,3,4,-1,-1,5]
 # new labels = ["正常", "侧视", "喝水", "吸烟", "玩手机", "接电话"] 6 2
 
 # new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话","其他"] 7
@@ -210,10 +210,10 @@ def convert_Label():
     # dest_txt = r"data/txt_raw/total_test_c6.txt"
     # convert_index = [0, -1, 1, 2, 3, 4, -1, -1, 5]
 
-    # 9类转6类 2 new labels = ["正常", "侧视", "喝水", "吸烟", "玩手机", "接电话"]
-    source_txt = r"data/txt_raw/total_train.txt"
-    dest_txt = r"data/txt_raw/total_train_62.txt"
-    convert_index = [0, 1, 2, 3, -1, 4, -1, -1, 5]
+    # # 9类转6类 2 new labels = ["正常", "侧视", "喝水", "吸烟", "玩手机", "接电话"]
+    # source_txt = r"data/txt_raw/total_train.txt"
+    # dest_txt = r"data/txt_raw/total_train_62.txt"
+    # convert_index = [0, 1, 2, 3, -1, 4, -1, -1, 5]
 
     # # 9类转7类
     # source_txt = r"data/txt/12_23_12_addpre_train224.txt"
@@ -256,11 +256,18 @@ def convert_Label():
 
     # # 9类转8类
     # # new labels = ["正常", "侧视", "喝水", "吸烟", "操作中控", "玩手机", "侧身拿东西", "接电话"] 8
-    # source_txt = r"data/txt_raw_crop/total_test_crop.txt"
-    # dest_txt = r"data/txt_raw_crop/total_test_crop_8.txt"
-    # source_txt = r"data/txt_raw/total_train.txt"
-    # dest_txt = r"data/txt_raw/total_train_8.txt"
+    # source_txt = r"data/bus/test224.txt"
+    # dest_txt = r"data/bus/test224_8.txt"
+    # # source_txt = r"data/bus/addcar_test224.txt"
+    # # dest_txt = r"data/bus/addcar_test224_8.txt"
     # convert_index = [0, 1, 2, 3, 4, 5, 6, -1, 7]
+
+    # 9类转6类  new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话"]
+    # source_txt = r"data/ours/224/train_crop224.txt"
+    # dest_txt = r"data/ours/224/train_crop224_6.txt"
+    source_txt = r"data/ours/224/test_crop224.txt"
+    dest_txt = r"data/ours/224/test_crop224_6.txt"
+    convert_index = [0, -1, 1, 2, 3, 4, -1, -1, 5]
 
     with open(source_txt, encoding='utf-8') as f:
         lines = f.readlines()
@@ -345,12 +352,28 @@ if __name__ == '__main__':
     # createTxt_100()
     # convert_imagenetVal()
     # create_imagenet_val()
-    # data_path = r"D:\datasets\11_16\dataset\test"
-    # createTxt(data_path, "./data/txt_raw_crop/1116_test_crop.txt")
-    # data_path = r"D:\datasets\12_23_2\dataset\test_crop"
-    # createTxt2(data_path, "./data/txt_raw_crop/12_23_2_test_crop.txt")
-    # data_path = r"D:\datasets\3_25\cam_he\dataset\train_crop"
-    # createTxt2(data_path, "data/txt_3_25/train325_crop.txt")
+    # data_path = r"D:\dataset\state-farm-distracted-driver-detection\imgs\train224"
+    # createTxt(data_path, "data/stateFarm/stateFarm.txt")
+    # data_path = r"D:\datasets\11_16\dataset\test224"
+    # createTxt(data_path, "data/ours/cut224/11_16_test224.txt")
+    # data_path = r"D:\datasets\11_16\dataset\test_crop224"
+    # createTxt(data_path, "data/ours/cut224/11_16_test_crop224.txt")
+    # data_path = r"D:\datasets\11_16\dataset\train224"
+    # createTxt(data_path, "data/ours/cut224/11_16_train224.txt")
+    # data_path = r"D:\datasets\11_09\train_crop224"
+    # createTxt(data_path, "data/ours/cut224/11_9_train_crop224.txt")
+    # data_path = r"D:\datasets\3_23\cam_chen\dataset\test224"
+    # createTxt2(data_path, "data/bus/test224.txt")
+    # data_path = r"D:\datasets\3_23\cam_chen\dataset\train224"
+    # createTxt2(data_path, "data/bus/train224.txt")
+    # data_path = r"D:\datasets\3_25\cam_he\dataset\train224"
+    # createTxt2(data_path, "data/ours/cut224/3_25_train224.txt")
+    # data_path = r"D:\datasets\12_23_2\dataset\train_crop224"
+    # createTxt2(data_path, "data/ours/cut224/12_232_train_crop224.txt")
+    # data_path = r"D:\datasets\3_23\cam_chen\dataset\test"
+    # createTxt2(data_path, "data/bus/test.txt")
+    # data_path = r"D:\datasets\3_23\cam_chen\dataset\train"
+    # createTxt2(data_path, "data/bus/train.txt")
     # data_path = r"D:\dataset\VLR-40\train"
     # convertName(data_path)
     # source = r"./data/imagenet/imagenet2012_trains.txt"

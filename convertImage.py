@@ -25,17 +25,19 @@ def resize():
 
 # 图片按人分别放置
 def resize2():
-    # source_dir = r"D:\drivedata\train"
-    # dest_dir = r"D:\drivedata\train224"
     # source_dir = r"D:\datasets\12_23_2\dataset\train"
     # dest_dir = r"D:\datasets\12_23_2\dataset\train224"
-    source_dir = r"D:\datasets\12_23_1\dataset\train"
-    dest_dir = r"D:\datasets\12_23_1\dataset\train224"
+    # source_dir = r"D:\datasets\3_25\cam_he\dataset\test"
+    # dest_dir = r"D:\datasets\3_25\cam_he\dataset\test224"
+    source_dir = r"D:\datasets\3_23\cam_chen\dataset\test"
+    dest_dir = r"D:\datasets\3_23\cam_chen\dataset\test224"
     weight = 224
     height = 224
     for dir in os.listdir(source_dir):
         image_path = os.path.join(source_dir, dir)
         for name in os.listdir(image_path):
+            if name == "delete":
+                continue
             dir_path = os.path.join(image_path, name)
             dest_path = os.path.join(dest_dir,dir, name)
             if not os.path.exists(dest_path):
@@ -56,8 +58,8 @@ def crop():
     # source_dir = r"D:\datasets\11_16\dataset\test"
     # dest_dir = r"D:\datasets\11_16\dataset\test_crop224"
     # crop_bbox = (0, 0, 1252, 1296)
-    source_dir = r"D:\drivedata\train"
-    dest_dir = r"D:\drivedata\train_crop224"
+    # source_dir = r"D:\drivedata\train"
+    # dest_dir = r"D:\drivedata\train_crop224"
     source_dir = r"D:\drivedata\test"
     dest_dir = r"D:\drivedata\test_crop224"
     crop_bbox = (0, 0, 1060, 1080)
@@ -128,7 +130,7 @@ def crop_show():
     # out = cropped_im.resize((weight, height), Image.ANTIALIAS)
 if __name__ == '__main__':
     # resize()
-    # resize2()
+    resize2()
     # crop()
-    crop224()
+    # crop224()
     # crop_show()

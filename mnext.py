@@ -230,15 +230,16 @@ if __name__=='__main__':
     import torch
     from torchvision import models
     model = mnext()
+    print(model)
     print('Total params: %f M' % (sum(p.numel() for p in model.parameters()) / 1024. / 1024.0))
-    print(len(list(model.modules())))
-
-    input = torch.randn(1, 3, 224, 224)
-    # y = model(input)
-    # # print(y.shape)
-    # print('Total params: %f M' % (sum(p.numel() for p in model.parameters())/ 1024. / 1024.0))
-    from thop import profile
-    flops, params = profile(model, inputs=[input])
-    print(flops)
-    print(params)
-    print('Total params: %f M' % (sum(p.numel() for p in model.parameters())))
+    # print(len(list(model.modules())))
+    #
+    # input = torch.randn(1, 3, 224, 224)
+    # # y = model(input)
+    # # # print(y.shape)
+    # # print('Total params: %f M' % (sum(p.numel() for p in model.parameters())/ 1024. / 1024.0))
+    # from thop import profile
+    # flops, params = profile(model, inputs=[input])
+    # print(flops)
+    # print(params)
+    # print('Total params: %f M' % (sum(p.numel() for p in model.parameters())))
