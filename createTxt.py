@@ -265,8 +265,8 @@ def convert_Label():
     # 9类转6类  new labels = ["正常", "喝水", "吸烟", "操作中控", "玩手机", "接电话"]
     # source_txt = r"data/ours/224/train_crop224.txt"
     # dest_txt = r"data/ours/224/train_crop224_6.txt"
-    source_txt = r"data/ours/224/test_crop224.txt"
-    dest_txt = r"data/ours/224/test_crop224_6.txt"
+    source_txt = r"data/txt_raw_crop/total_test_crop.txt"
+    dest_txt = r"data/txt_raw_crop/total_test_crop_6.txt"
     convert_index = [0, -1, 1, 2, 3, 4, -1, -1, 5]
 
     with open(source_txt, encoding='utf-8') as f:

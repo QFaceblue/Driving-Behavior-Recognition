@@ -18,7 +18,6 @@ import copy
 from utils import progress_bar, format_time
 import json
 from PIL import Image
-from efficientnet_pytorch import EfficientNet
 from ghostnet import ghostnet
 from mnext import mnext
 from mobilenetv3 import MobileNetV3, mobilenetv3_s
@@ -155,26 +154,27 @@ class MyDataset(Dataset):
 #     transforms.Normalize(mean=[0.485, 0.456, 0.406],
 #                          std=[0.229, 0.224, 0.225])
 # ])
-# # #aug4
-# train_transform = transforms.Compose([
-#     transforms.Resize((240, 240)),
-#     transforms.RandomCrop(224),
-#     # transforms.Resize((224, 224)),
-#     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
-#     transforms.RandomRotation(10, resample=False, expand=False, center=None),
-#     transforms.ToTensor(),
-#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
-#                          std=[0.229, 0.224, 0.225])
-# ])
-# aug3
+# #aug4
 train_transform = transforms.Compose([
-    transforms.Resize((224, 224)),
+    transforms.Resize((240, 240)),
+    transforms.RandomCrop(224),
+    # transforms.Resize((224, 224)),
     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
     transforms.RandomRotation(10, resample=False, expand=False, center=None),
     transforms.ToTensor(),
     transforms.Normalize(mean=[0.485, 0.456, 0.406],
                          std=[0.229, 0.224, 0.225])
 ])
+
+# # aug3
+# train_transform = transforms.Compose([
+#     transforms.Resize((224, 224)),
+#     transforms.ColorJitter(brightness=0.5, contrast=0.5, saturation=0.5, hue=0.1),
+#     transforms.RandomRotation(10, resample=False, expand=False, center=None),
+#     transforms.ToTensor(),
+#     transforms.Normalize(mean=[0.485, 0.456, 0.406],
+#                          std=[0.229, 0.224, 0.225])
+# ])
 # # aug2
 # train_transform = transforms.Compose([
 #     transforms.Resize((224, 224)),
@@ -247,12 +247,12 @@ num_classes = 9
 # net = MobileNetV2_s(num_classes=num_classes)
 # net = MobileNetV2_s2(num_classes=num_classes)
 # net = MobileNetV2_s3(num_classes=num_classes)
-net = MobileNetV2_s4(num_classes=num_classes)
+# net = MobileNetV2_s4(num_classes=num_classes)
 # net = MobileNetV2_sgb(num_classes=num_classes)
 # net = MobileNetV2_sgb_sa(num_classes=num_classes)
 # net = MobileNetV2_sgb_sa2(num_classes=num_classes)
 
-# net = models.mobilenet_v2(pretrained=False, width_mult=1.0, num_classes=num_classes)
+net = models.mobilenet_v2(pretrained=False, width_mult=1.0, num_classes=num_classes)
 
 # net = models.mobilenet_v2(pretrained=True, width_mult=1.0)
 # num_in = net.classifier[1].in_features
@@ -583,12 +583,16 @@ criterion = nn.CrossEntropyLoss()
 # optimizer = optim.Adam(net.parameters(), lr=1e-4, betas=(0.9, 0.999), eps=1e-8, weight_decay=1e-6)
 # scheduler = optim.lr_scheduler.MultiStepLR(optimizer, milestones=[500, 1000, 1500], gamma=0.1)
 
-epoches = 27
-optimizer = optim.Adam(net.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=1e-6)
+# epoches = 27
+# optimizer = optim.Adam(net.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=1e-6)
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_0)
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_1)
 # scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_2)
-scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_3)
+# scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_3)
+
+epoches = 45
+optimizer = optim.Adam(net.parameters(), lr=1e-3, betas=(0.9, 0.999), eps=1e-8, weight_decay=1e-6)
+scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_2)
 
 # epoches = 27
 # optimizer = optim.Adam(net.parameters(), lr=1e-2)
@@ -613,8 +617,12 @@ scheduler = optim.lr_scheduler.LambdaLR(optimizer, lr_lambda=change_3)
 net.to(device)
 
 # # all class9_crop
-# train_dataset = MyDataset("data/txt_raw_crop/total_train_crop.txt", train_transform)
-# val_dataset = MyDataset("data/txt_raw_crop/total_test_crop.txt", val_transform)
+train_dataset = MyDataset("data/txt_raw_crop/total_train_crop.txt", train_transform)
+val_dataset = MyDataset("data/txt_raw_crop/total_test_crop.txt", val_transform)
+
+# # all class6_crop
+# train_dataset = MyDataset("data/txt_raw_crop/total_train_crop_6.txt", train_transform)
+# val_dataset = MyDataset("data/txt_raw_crop/total_test_crop_6.txt", val_transform)
 
 # # all class9
 # train_dataset = MyDataset("data/txt_raw/total_train.txt", train_transform)
@@ -690,8 +698,8 @@ net.to(device)
 
 # train_dataset = MyDataset("data/ours/224/train224_6.txt", train_transform)
 # val_dataset = MyDataset("data/ours/224/test224_6.txt", val_transform)
-train_dataset = MyDataset("data/ours/224/train_crop224_6.txt", train_transform)
-val_dataset = MyDataset("data/ours/224/test_crop224_6.txt", val_transform)
+# train_dataset = MyDataset("data/ours/224/train_crop224_6.txt", train_transform)
+# val_dataset = MyDataset("data/ours/224/test_crop224_6.txt", val_transform)
 
 start_epoch = 0  # start from epoch 0 or last checkpoint epoch
 
@@ -1056,21 +1064,63 @@ def train(epoch):
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/lr/222/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/lr/333/'
 
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug/lr/000/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug/lr/333/'
+savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug/lr/444/'
+
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug2/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug2/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/crop/aug2/lr/333/'
+
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/lr/111/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/lr/222/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/lr/333/'
+
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug/lr/000/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug/lr/333/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug/lr/444/'
+
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug2/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug2/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/crop/aug2/lr/333/'
 
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/lr/111/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/lr/222/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/lr/333/'
 
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug/lr/000/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug/lr/333/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug/lr/444/'
+
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug2/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug2/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug2/lr/333/'
+
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/class6/crop/aug/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/class6/crop/aug/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/class6/crop/aug/lr/333/'
+
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/class6/crop/aug/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/class6/crop/aug/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/class6/crop/aug/lr/333/'
+
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/class6/crop/lr/111/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/class6/crop/lr/222/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2/pre/class6/crop/lr/333/'
 
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/class6/crop/aug/lr/111/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/class6/crop/aug/lr/222/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/class6/crop/aug/lr/333/'
+
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/class6/crop/lr/111/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/class6/crop/lr/222/'
-savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/class6/crop/lr/333/'
+# savepath = 'checkpoint/paper_test/ours/mobilenetv2_s4/pre/class6/crop/lr/333/'
 
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/class6/crop/lr/111/'
 # savepath = 'checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/class6/crop/lr/222/'
@@ -1270,12 +1320,12 @@ def val(epoch):
         print("best_acc:{:.4f}".format(acc))
 
         # torch.save(state, savepath + 'mobilenetv2_acc={:.4f}.pth'.format(acc))
-        # torch.save(state, savepath + 'mobilenetv2_crop_acc={:.4f}.pth'.format(acc))
+        torch.save(state, savepath + 'mobilenetv2_crop_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mobilenetv2_s3_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mobilenetv2_s4_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mobilenetv2_s4_6_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mobilenetv2_s4_crop_acc={:.4f}.pth'.format(acc))
-        torch.save(state, savepath + 'mobilenetv2_s4_6_crop_acc={:.4f}.pth'.format(acc))
+        # torch.save(state, savepath + 'mobilenetv2_s4_6_crop_acc={:.4f}.pth'.format(acc))
 
         # torch.save(state, savepath + 'mobilenetv2_sgb_acc={:.4f}.pth'.format(acc))
         # torch.save(state, savepath + 'mobilenetv2_sgb_sa2_acc={:.4f}.pth'.format(acc))
@@ -1436,16 +1486,16 @@ def main(epoches=epoches):
 
 
 def net_test():
-    num_classes = 6
+    # num_classes = 6
     # num_classes = 7
     # num_classes = 8
-    # num_classes = 9
+    num_classes = 9
     # net = models.mobilenet_v2(pretrained=False, num_classes=num_classes, width_mult=1.0)
     net = MobileNetV2_sgb_sa2(num_classes=num_classes)
     # net = MobileNetV2_cbam(num_classes=num_classes, width_mult=1.0, add_location=(96, 160), ca=False, sa=True)
     # model_path = r"checkpoint/paper_test/mobilenetv2/pre/bus/555/mobilenetv2_8_acc=85.2596.pth"
-    # model_path = r"checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/000/mobilenetv2_crop_sgb_sa2_acc=88.1364.pth"
-    model_path = r"checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/class6/crop/000/mobilenetv2_6_crop_sgb_sa2_acc=91.8470.pth"
+    model_path = r"checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/crop/aug/lr/333/mobilenetv2_crop_sgb_sa2_acc=90.1631.pth"
+    # model_path = r"checkpoint/paper_test/ours/mobilenetv2_sgb_sa2/pre/class6/crop/aug/lr/222/mobilenetv2_6_crop_sgb_sa2_acc=92.4964.pth"
     # 加载模型权重，忽略不同
     model_dict = net.state_dict()
     checkpoint = torch.load(model_path, map_location=device)
@@ -1472,9 +1522,11 @@ def net_test():
     # test_dataset = MyDataset("data/bus/test224.txt", test_transform)
     # test_dataset = MyDataset("data/ours/224/test224.txt", test_transform)
     # test_dataset = MyDataset("data/ours/224/test_crop224.txt", test_transform)
-    test_dataset = MyDataset("data/ours/224/test_crop224_6.txt", test_transform)
+    # test_dataset = MyDataset("data/ours/224/test_crop224_6.txt", test_transform)
     # test_dataset = MyDataset("data/bus/test224_8.txt", test_transform)
     # test_dataset = MyDataset("data/ours/224/test224_8.txt", test_transform)
+    test_dataset = MyDataset("data/txt_raw_crop/total_test_crop.txt", val_transform)
+    # test_dataset = MyDataset("data/txt_raw_crop/total_test_crop_6.txt", val_transform)
     test_dataloader = DataLoader(dataset=test_dataset,
                                  batch_size=64,
                                  shuffle=True,

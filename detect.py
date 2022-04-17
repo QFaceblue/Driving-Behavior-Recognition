@@ -1,5 +1,4 @@
 import torch
-from efficientnet_pytorch import EfficientNet
 # import onnx # 环境问题
 from torchvision import datasets, models, transforms
 import json
@@ -17,9 +16,6 @@ with open(classes_path) as f:
     label_name = [c.strip() for c in f.readlines()]
 num_classes = len(label_name)
 
-# # efficientnet b0
-# model = EfficientNet.from_name('efficientnet-b0',num_classes=num_classes)
-# path = r"checkpoint/B0/444/B0_acc=84.8921.pth"
 ## model: resnet18  dataset: mydataset
 # model = models.resnet18(pretrained=False,num_classes=num_classes)
 # # 加载模型参数
