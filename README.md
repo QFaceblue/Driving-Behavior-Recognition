@@ -18,7 +18,8 @@ opencv-python 4.5
 使用ceateTxt.py创建数据集标签文件 
 # 模型训练
 train.py是模型训练代码，使用时注意修改相关参数  
-vlr40_train.py是精简版训练代码
+vlr40_train.py是精简版训练代码,可以使用VLR40数据集训练车标识别模型  
+VLR40数据集仅供学习使用，链接：https://pan.baidu.com/s/1SctXvwqWe5WlfkwcmrPXQw 提取码：75c3
 # 模型转换
 torchToOnnx.py将pth格式权重转化为通用onnx格式权重
 # 模型测试
